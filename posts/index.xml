@@ -2,31 +2,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Posts on VachanVY</title>
-    <link>http://localhost:1313/posts/</link>
+    <link>https://vachanvy.github.io/posts/</link>
     <description>Recent content in Posts on VachanVY</description>
     <generator>Hugo -- 0.152.2</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 03 Jan 2026 15:48:07 +0530</lastBuildDate>
-    <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Neuroforge</title>
-      <link>http://localhost:1313/posts/neuroforge/</link>
-      <pubDate>Sat, 03 Jan 2026 15:48:07 +0530</pubDate>
-      <guid>http://localhost:1313/posts/neuroforge/</guid>
-      <description>&lt;h1 id=&#34;neural-networks&#34;&gt;Neural Networks&lt;/h1&gt;
-&lt;h2 id=&#34;aim-of-this-repo&#34;&gt;Aim of this repo&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;This repo aims to make you an MLPWhiz (especially a BackpropWhiz) by creating a Neural Network from scratch &lt;strong&gt;just using &lt;code&gt;torch.tensor&lt;/code&gt;&lt;/strong&gt; (&lt;strong&gt;NO using &lt;code&gt;torch&lt;/code&gt;&amp;rsquo;s autograd&lt;/strong&gt;) and training them on the &lt;code&gt;MNIST&lt;/code&gt; dataset (A dataset containing handwritten digits from 0 to 9)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;roadmap&#34;&gt;Roadmap&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;The best way to go about this tutorial is to take a pencil and a piece of paper and start deriving particularly the backprop equations once you get the concept&lt;/li&gt;
-&lt;li&gt;First we&amp;rsquo;ll start off with logistic regression, which is the simpler form of MLPs just containing 1 layer and can recognize 2 classes, then scale into MLPs by adding many layers and making it recognize as many classes as you want&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;logistic-regression&#34;&gt;Logistic Regression&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Now suppose we want to build a model that classifies a handwritten digit 9 vs any digit that is not 9&lt;/p&gt;</description>
-    </item>
+    <lastBuildDate></lastBuildDate>
+    <atom:link href="https://vachanvy.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>
