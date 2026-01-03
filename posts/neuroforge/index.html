@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Neuroforge | VachanVY</title>
+<meta name="keywords" content="">
+<meta name="description" content="Better to check out here for latest updates.
+Also some images are not rendering properly here, so better to check out the repo.
+Neural Networks
+Aim of this repo
+
+This repo aims to make you an MLPWhiz (especially a BackpropWhiz) by creating a Neural Network from scratch just using torch.tensor (NO using torch&rsquo;s autograd) and training them on the MNIST dataset (A dataset containing handwritten digits from 0 to 9)
+
+Roadmap
+
+The best way to go about this tutorial is to take a pencil and a piece of paper and start deriving particularly the backprop equations once you get the concept
+First we&rsquo;ll start off with logistic regression, which is the simpler form of MLPs just containing 1 layer and can recognize 2 classes, then scale into MLPs by adding many layers and making it recognize as many classes as you want
+
+Logistic Regression
+
+
+Now suppose we want to build a model that classifies a handwritten digit 9 vs any digit that is not 9">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/posts/neuroforge/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.343cc480b9ffc8f04ccbe5e968ad674880cab773ec19905e93033065c1e7a804.css" integrity="sha256-NDzEgLn/yPBMy&#43;XpaK1nSIDKt3PsGZBekwMwZcHnqAQ=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/neuroforge/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .toc {
+                background: var(--entry);
+            }
+        }
+
+        @media (prefers-color-scheme: light) {
+            .list::-webkit-scrollbar-thumb {
+                border-color: var(--code-bg);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="VachanVY (Alt + H)">VachanVY</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      Neuroforge
+      <span class="entry-hint" title="Draft">
+        <svg xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 -960 960 960" fill="currentColor">
+          <path
+            d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+        </svg>
+      </span>
+    </h1>
+    <div class="post-meta"><span title='2026-01-03 15:48:07 +0530 IST'>January 3, 2026</span>&nbsp;·&nbsp;<span>20 min</span>
+
+</div>
+  </header> <div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#neural-networks" aria-label="Neural Networks">Neural Networks</a><ul>
+                        
+                <li>
+                    <a href="#aim-of-this-repo" aria-label="Aim of this repo">Aim of this repo</a></li>
+                <li>
+                    <a href="#roadmap" aria-label="Roadmap">Roadmap</a></li>
+                <li>
+                    <a href="#logistic-regression" aria-label="Logistic Regression">Logistic Regression</a><ul>
+                        
+                <li>
+                    <a href="#why-you-shouldnt-use-sigmoid-activation-in-hidden-layers-in-neural-networks" aria-label="Why you shouldn&rsquo;t use sigmoid activation in hidden layers in Neural Networks">Why you shouldn&rsquo;t use sigmoid activation in hidden layers in Neural Networks</a></li></ul>
+                </li>
+                <li>
+                    <a href="#mlps" aria-label="MLPs">MLPs</a><ul>
+                        
+                <li>
+                    <a href="#forward-propagation" aria-label="Forward Propagation">Forward Propagation</a></li>
+                <li>
+                    <a href="#back-propagation" aria-label="Back-propagation">Back-propagation</a></li>
+                <li>
+                    <a href="#gradient-descent" aria-label="Gradient Descent">Gradient Descent</a></li>
+                <li>
+                    <a href="#training-loop" aria-label="Training Loop">Training Loop</a></li></ul>
+                </li>
+                <li>
+                    <a href="#results" aria-label="Results">Results</a></li></ul>
+                </li>
+                <li>
+                    <a href="#batch-normalization-and-layer-normalization" aria-label="Batch-Normalization and Layer-Normalization">Batch-Normalization and Layer-Normalization</a><ul>
+                        
+                <li>
+                    <a href="#batch-normalization" aria-label="Batch-Normalization">Batch-Normalization</a></li>
+                <li>
+                    <a href="#layer-normalization" aria-label="Layer-Normalization">Layer-Normalization</a><ul>
+                        
+                <li>
+                    <a href="#comparision" aria-label="Comparision">Comparision</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#dropout--" aria-label="Dropout [Paper] [Deep-Learning Book]">Dropout [Paper] [Deep-Learning Book]</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#comparision-1" aria-label="Comparision">Comparision</a></li></ul>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#lenet-convolutional-neural-networks-from-scratch" aria-label="LeNet: Convolutional Neural Networks from scratch">LeNet: Convolutional Neural Networks from scratch</a><ul>
+                        
+                <li>
+                    <a href="#neural-network-optimization" aria-label="Neural Network Optimization">Neural Network Optimization</a><ul>
+                        
+                <li>
+                    <a href="#momentum" aria-label="Momentum">Momentum</a></li>
+                <li>
+                    <a href="#bias-correction" aria-label="Bias Correction">Bias Correction</a></li>
+                <li>
+                    <a href="#adaptive-learning-rate" aria-label="Adaptive Learning Rate">Adaptive Learning Rate</a></li>
+                <li>
+                    <a href="#nestrov-accelerated-gradient" aria-label="Nestrov accelerated gradient">Nestrov accelerated gradient</a></li>
+                <li>
+                    <a href="#adam" aria-label="Adam">Adam</a></li>
+                <li>
+                    <a href="#second-order-methods" aria-label="Second-order methods">Second-order methods</a></li>
+                <li>
+                    <a href="#muon-an-optimizer-for-hidden-layers-in-neural-networks" aria-label="Muon: An optimizer for hidden layers in neural networks">Muon: An optimizer for hidden layers in neural networks</a></li>
+                <li>
+                    <a href="#some-plots-comparing-optimizers" aria-label="Some plots comparing Optimizers">Some plots comparing Optimizers</a></li>
+                <li>
+                    <a href="#benchmarking-optimizers-on-cifar-10" aria-label="Benchmarking Optimizers on CIFAR-10">Benchmarking Optimizers on CIFAR-10</a></li>
+                <li>
+                    <a href="#references" aria-label="References">References</a></li></ul>
+                </li>
+                <li>
+                    <a href="#additional-notes-on-neural-network-optimization" aria-label="Additional Notes on Neural Network Optimization">Additional Notes on Neural Network Optimization</a><ul>
+                        
+                <li>
+                    <a href="#more-on-adam-and-adamw-adam-with-weight-decay-optimizers" aria-label="More on Adam and AdamW (Adam with weight decay) Optimizers">More on Adam and AdamW (Adam with weight decay) Optimizers</a><ul>
+                        
+                <li>
+                    <a href="#adam-1" aria-label="Adam">Adam</a></li>
+                <li>
+                    <a href="#adamw" aria-label="AdamW">AdamW</a></li></ul>
+                </li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#model-distillation--" aria-label="Model Distillation [Paper] [Reference]">Model Distillation [Paper] [Reference]</a><ul>
+                        
+                <li>
+                    <a href="#paper-snippets" aria-label="Paper Snippets">Paper Snippets</a><ul>
+                        
+                <li>
+                    <a href="#distillation" aria-label="Distillation">Distillation</a></li>
+                <li>
+                    <a href="#preliminary-experiments-on-mnist" aria-label="Preliminary experiments on MNIST">Preliminary experiments on MNIST</a></li>
+                <li>
+                    <a href="#soft-targets-as-regularizers" aria-label="Soft-Targets as Regularizers">Soft-Targets as Regularizers</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#mixture-of-experts-moe-layer" aria-label="Mixture-of-Experts (MoE) layer">Mixture-of-Experts (MoE) layer</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#introduction" aria-label="Introduction">Introduction</a></li></ul>
+                    
+                <li>
+                    <a href="#the-sparsely-gated-mixture-of-experts-layer" aria-label="THE SPARSELY-GATED MIXTURE-OF-EXPERTS LAYER">THE SPARSELY-GATED MIXTURE-OF-EXPERTS LAYER</a><ul>
+                        
+                <li>
+                    <a href="#gating-network" aria-label="Gating Network">Gating Network</a></li></ul>
+                </li>
+                <li>
+                    <a href="#addressing-performance-challenges" aria-label="ADDRESSING PERFORMANCE CHALLENGES">ADDRESSING PERFORMANCE CHALLENGES</a><ul>
+                        
+                <li>
+                    <a href="#balancing-expert-utilization" aria-label="Balancing Expert Utilization">Balancing Expert Utilization</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><p>Better to check out <a href="https://github.com/VachanVY/NeuroForge">here</a> for latest updates.
+Also some images are not rendering properly here, so better to check out the repo.</p>
+<h1 id="neural-networks">Neural Networks<a hidden class="anchor" aria-hidden="true" href="#neural-networks">#</a></h1>
+<h2 id="aim-of-this-repo">Aim of this repo<a hidden class="anchor" aria-hidden="true" href="#aim-of-this-repo">#</a></h2>
+<ul>
+<li>This repo aims to make you an MLPWhiz (especially a BackpropWhiz) by creating a Neural Network from scratch <strong>just using <code>torch.tensor</code></strong> (<strong>NO using <code>torch</code>&rsquo;s autograd</strong>) and training them on the <code>MNIST</code> dataset (A dataset containing handwritten digits from 0 to 9)</li>
+</ul>
+<h2 id="roadmap">Roadmap<a hidden class="anchor" aria-hidden="true" href="#roadmap">#</a></h2>
+<ul>
+<li>The best way to go about this tutorial is to take a pencil and a piece of paper and start deriving particularly the backprop equations once you get the concept</li>
+<li>First we&rsquo;ll start off with logistic regression, which is the simpler form of MLPs just containing 1 layer and can recognize 2 classes, then scale into MLPs by adding many layers and making it recognize as many classes as you want</li>
+</ul>
+<h2 id="logistic-regression">Logistic Regression<a hidden class="anchor" aria-hidden="true" href="#logistic-regression">#</a></h2>
+<ul>
+<li>
+<p>Now suppose we want to build a model that classifies a handwritten digit 9 vs any digit that is not 9</p>
+</li>
+<li>
+<p>The input to the model are the pixels of the image (which are the features) which are to be linearly transformed so that they can classify the digits, this is done with the help of learnable parameters learned from the data that we will provide</p>
+</li>
+<li>
+<p>And here we have to classify 9 vs not 9 so we only need one unit in the last layer (in MLPs we have many classes so we have <code>n_classes</code> number of units in the last layer where <code>n_classes</code> is the number of classes which will represent the probabilities for the <code>n_classes</code> given input)</p>
+</li>
+<li>
+<p>Sigmoid function: <img loading="lazy" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/a2ccf74b6142eee1c55895ba62531ba11871cf90"></p>
+<p>This function squishes the pre-activations (<code>Z</code>) to have a range of (0, 1)</p>
+</li>
+<li>
+<p>Then we define a threshold (which is usually 0.5), if the probabilities are above it then the digit is 9 else it&rsquo;s not</p>
+</li>
+<li>
+<p>Take a look at the below example<br>
+<img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Exam_pass_logistic_curve.svg/600px-Exam_pass_logistic_curve.svg.png"></p>
+</li>
+<li>
+<p>Forwardprop</p>
+<ul>
+<li>
+<!-- raw HTML omitted -->
+</li>
+<li></li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>X <span style="color:#f92672">=</span> inputs<span style="color:#f92672">.</span>reshape((B, H<span style="color:#f92672">*</span>W<span style="color:#f92672">*</span><span style="color:#ae81ff">1</span>)) <span style="color:#75715e"># (B, F=H*W) &lt;= (B, H, W, 1) = (Batch, Height, Width, Num_Channels)</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">X = [
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        [x00, x01, ..., x0W,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        x10, x11, ..., x1W,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        ...
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        xH0, xH1, ..., xHW],
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        ... (more batches of examples)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    ]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>W <span style="color:#f92672">=</span> [[w00], <span style="color:#75715e"># (F, 1)</span>
+</span></span><span style="display:flex;"><span>    [w10],
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>    [wF0]]
+</span></span><span style="display:flex;"><span>B <span style="color:#f92672">=</span> [[b0]] <span style="color:#75715e"># (1, 1) # broadcasted and added to element in Z</span>
+</span></span><span style="display:flex;"><span>Z <span style="color:#f92672">=</span> X <span style="color:#f92672">@</span> W <span style="color:#f92672">+</span> B <span style="color:#75715e"># (B, 1) &lt;= (B, F) @ (F, 1) + (1, 1)</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Z = [[z1 = x00*w00 + x01*w10 + ... + xHW*wF0 + b0],
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    ... (more batches of examples)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    ]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>A <span style="color:#f92672">=</span> sigmoid(Z) <span style="color:#75715e"># (B, 1)</span>
+</span></span></code></pre></div><ul>
+<li>
+<p><code>Z</code> contains Unnormalized probabilities, the sigmoid function normalizes (range: 0-1) <code>Z</code> to get probabilities of whether the digit is 9 (the higher the probability, the more confident the model is that the digit is 9)</p>
+</li>
+<li>
+<p>Cost function: We have to penalize the model for predicting wrong values and reward it for predicting the right values</p>
+<p><em>We want to minimize the loss to improve our model</em></p>
+<p>Therefore we use the loss function:
+<img alt="Alt text" loading="lazy" src="/posts/neuroforge/images/image-1.png"> which just means that if</p>
+<p><code>y_i = 1 (digit is 9)</code>; Loss is <code>-log(a_i)</code> which is negative log-probability of the digit is <code>9</code>; So we want to minimize <code>-log(a_i)</code> which means we want to maximize <code>a_i (the probability of digit being 9)</code> when the digit is actually 9 which is what we want</p>
+<p><code>y_i = 0 (digit is not 9)</code>; Loss is <code>-log(1 - a_i)</code> which is negative log-probability of the digit not being <code>9</code>; So we want to minimize <code>-log(1 - a_i)</code> which means we want to maximize <code>1 - a_i (the probability of digit not being 9)</code> when the digit is not 9 which is again what we want</p>
+</li>
+<li>
+<p>Back Propagation</p>
+</li>
+<li>
+<p>Now using the below equations, we&rsquo;ll calculate how we should change the parameters so that they incorporate the learnings from the cost function and make the model better<br>
+<img alt="Alt text" loading="lazy" src="/posts/neuroforge/images/image.png"><br>
+where Y is the true classes (9 or not 9)\</p>
+</li>
+<li>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<p>We&rsquo;ll change the parameters according to the equations below<br>
+<code>W = W - lr * dJ_dW</code><br>
+<code>B = B - lr * dJ_dB</code></p>
+</li>
+<li>
+<p>The above processes are usually not done taking the whole training set, this results in accurate gradients but this process is very slow as in deep learning, datasets are very large<br>
+Instead we take <code>batch_size</code> number of train examples from the dataset and do the above process, this results in the gradients being less accurate but this is much faster and has proved to be very much effective in practice</p>
+</li>
+<li>
+<p>We repeat the above processes for a number of <code>epochs</code>, till the model converges, see the training loop sub-section in the MLPs section for more details</p>
+</li>
+<li>
+<!-- raw HTML omitted -->
+<p>Trained on <strong>Breast Cancer Wisconsin</strong> dataset</p>
+</li>
+</ul>
+<h3 id="why-you-shouldnt-use-sigmoid-activation-in-hidden-layers-in-neural-networks">Why you shouldn&rsquo;t use <code>sigmoid</code> activation in <em>hidden</em> layers in Neural Networks<a hidden class="anchor" aria-hidden="true" href="#why-you-shouldnt-use-sigmoid-activation-in-hidden-layers-in-neural-networks">#</a></h3>
+<ul>
+<li>
+<p>Sigmoid Activation Function</p>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<p>Derivative of Sigmoid Activation Function</p>
+<!-- raw HTML omitted -->
+<p>As the input to the sigmoid activation function reaches one of the extremes (as seen in the figure), its gradient (wrt input <code>o</code>) goes to 0, which can cause the  vanishing gradients problem, especially when using very deep neural networks; hence, never use sigmoid in <strong>hidden layers</strong> of neural networks</p>
+</li>
+<li>
+<p>Even Tanh!</p>
+<!-- raw HTML omitted -->
+</li>
+</ul>
+<hr>
+<h2 id="mlps">MLPs<a hidden class="anchor" aria-hidden="true" href="#mlps">#</a></h2>
+<h3 id="forward-propagation">Forward Propagation<a hidden class="anchor" aria-hidden="true" href="#forward-propagation">#</a></h3>
+<ul>
+<li>We stack many layers with a relu activation in-between layers and at the end add a softmax layer which calculates the probabilities given unnormalized activations</li>
+<li>Here unlike the sigmoid function we have <code>n_classes</code> number of units in the last layer where <code>n_classes</code> is the number of classes where each unit will represent the probabilities for each class given input</li>
+<li><img alt="forwardprop" loading="lazy" src="/posts/neuroforge/images/forwardprop.jpg"></li>
+<li>Cross Entropy Loss calculation:
+<img alt="loss calculation" loading="lazy" src="/posts/neuroforge/images/loss_calculation.jpg">
+We want to increase the probabilities of the true classes, therefore we minimize negative log-probs which does the same</li>
+</ul>
+<h3 id="back-propagation">Back-propagation<a hidden class="anchor" aria-hidden="true" href="#back-propagation">#</a></h3>
+<ul>
+<li><img alt="dLoss_dProba" loading="lazy" src="/posts/neuroforge/images/dproba.jpg"></li>
+<li><img alt="softmax derivatives wrt input" loading="lazy" src="/posts/neuroforge/images/derivative_softmax.png"></li>
+<li><img alt="dLoss_dLogits" loading="lazy" src="/posts/neuroforge/images/dLogits.jpg"></li>
+<li><img alt="dLoss_dW3" loading="lazy" src="/posts/neuroforge/images/dW3.jpg"></li>
+<li><img alt="dLoss_d(B3_&amp;_H2)" loading="lazy" src="/posts/neuroforge/images/dB3H2.jpg"></li>
+<li><img alt="dRest" loading="lazy" src="/posts/neuroforge/images/dRest.jpg"></li>
+</ul>
+<h3 id="gradient-descent">Gradient Descent<a hidden class="anchor" aria-hidden="true" href="#gradient-descent">#</a></h3>
+<ul>
+<li>
+<p>The negative gradient tells us the direction that corresponds to the steepest descent within an infinitesimally small region surrounding the current parameters</p>
+</li>
+<li>
+<p>So it&rsquo;s important to scale them down so that the training is stable, we do this with the help of the learning rate (lr), always keeping it less than 1 (  for very deep models we keep the lr of the order <code>1e-3</code> to <code>1e-5</code> so that the training is stable)</p>
+</li>
+<li>
+<p>We want to minimize the Loss (with the weights and biases as the parameters), we want to go down to the lowest point, the negative gradients give us the direction to the lowest point, and subtracting the parameters from their scaled-down gradients takes us downhill the Loss landscape<br>
+<img alt="ssss" loading="lazy" src="https://poissonisfish.files.wordpress.com/2020/11/non-convex-optimization-we-utilize-stochastic-gradient-descent-to-find-a-local-optimum.jpg"></p>
+</li>
+<li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>params <span style="color:#f92672">=</span> [w1, b1, w2, b2, w3, b3]
+</span></span><span style="display:flex;"><span>grads <span style="color:#f92672">=</span> [dL_dw1, dL_db1, dL_dw2, dL_db2, dL_dw3, dL_db3]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(len(params)):
+</span></span><span style="display:flex;"><span>    params[i] <span style="color:#f92672">=</span> params[i] <span style="color:#f92672">-</span> lr<span style="color:#f92672">*</span>grads[i]
+</span></span></code></pre></div></li>
+<li>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<p>Additional Note: Neural Network optimization is a non-convex optimization problem<br>
+<img alt="image" loading="lazy" src="https://github.com/user-attachments/assets/9e6134d5-8822-401a-894a-98dda3be8eb4"></p>
+</li>
+</ul>
+<hr>
+<h3 id="training-loop">Training Loop<a hidden class="anchor" aria-hidden="true" href="#training-loop">#</a></h3>
+<ul>
+<li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> epoch <span style="color:#f92672">in</span> range(epochs):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> step <span style="color:#f92672">in</span> range(steps):
+</span></span><span style="display:flex;"><span>        X_batch, y_batch <span style="color:#f92672">=</span> get_batch(X, y)
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># forward prop</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># backward prop</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># gradient descent</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">...</span>
+</span></span></code></pre></div>In one step the model is trained on <code>batch_size</code> number of train examples<br>
+In one <code>epoch</code> which contains <code>steps</code> number of steps, the model is trained on all the train examples<br>
+This done for <code>epochs</code> number of epochs, till the model converges</li>
+</ul>
+<hr>
+<h2 id="results">Results<a hidden class="anchor" aria-hidden="true" href="#results">#</a></h2>
+<pre tabindex="0"><code>Train Accuracy:      0.9969 | Train Loss: 0.0187 |
+Validation Accuracy: 0.9794 | Validation Loss: 0.0665 |
+</code></pre><!-- raw HTML omitted -->
+<ul>
+<li>See the notebook to see predictions</li>
+</ul>
+<h1 id="batch-normalization-and-layer-normalization">Batch-Normalization and Layer-Normalization<a hidden class="anchor" aria-hidden="true" href="#batch-normalization-and-layer-normalization">#</a></h1>
+<h2 id="batch-normalization">Batch-Normalization<a hidden class="anchor" aria-hidden="true" href="#batch-normalization">#</a></h2>
+<ul>
+<li><img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image__.png"></li>
+<li>Training Deep Neural Networks is complicated by the fact that the distribution of each layer&rsquo;s inputs changes during training, as the parameters of the previous layers change.</li>
+<li>This slows down the training by requiring lower learning rates and careful parameter initialization, and makes it notoriously hard to train models with saturating nonlinearities.</li>
+<li>We refer to this phenomenon as internal covariate shift, and address the problem by normalizing layer inputs</li>
+<li>Our methoddraws its strength from making normalization a part of the modelarchitecture and performingthe normalization for each training mini-batch</li>
+<li>Batch Normalization allows us to use much higher learningrates and be less careful about initialization</li>
+<li>Batch Normalization achieves the same accuracy with 14 times fewer training steps, and beats the original model by a significant margin</li>
+<li><strong>The change in the distributions of layers&rsquo; inputs presents a problem because the layers need to continuously adapt to the new distribution. When the input distribution to a learning system changes, it is said to experience covariate shift</strong></li>
+<li><img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-1__.png"></li>
+<li><img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-2.png"></li>
+</ul>
+<h2 id="layer-normalization">Layer-Normalization<a hidden class="anchor" aria-hidden="true" href="#layer-normalization">#</a></h2>
+<ul>
+<li>It is common among the NLP tasks to have different sentence lengths for different training cases. This is easy to deal with in an RNN because the same weights are used at every time-step. But when we apply batch normalization to an RNN in the obvious way, we need to to compute and store separate statistics for each time step in a sequence. This is problematic if a test sequence is longer than any of the training sequences. Layer normalization does not have such problem because its normalization terms depend only on the summed inputs to a layer at the current time-step. It also has only one set of gain and bias parameters shared over all time-steps.</li>
+<li>Here we just take mean-variance stats along the feature dimention, now no need for storing running mean and variance for inference!</li>
+<li><img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-5.png"></li>
+</ul>
+<h3 id="comparision">Comparision<a hidden class="anchor" aria-hidden="true" href="#comparision">#</a></h3>
+<ul>
+<li>
+<p>As you can see with normalization, the model learns/overfits faster than the model without normalization</p>
+</li>
+<li>
+<p><img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-4.png"><img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-3.png"><img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-7.png"></p>
+<p>No Normalization:    <code>Epoch: 30/30 | Loss: 0.0205 | Avg time per step: 0.44 ms | Validation Loss: 0.0649 |</code><br>
+Batch-Normalization: <code>Epoch: 9/30  | Loss: 0.0167 | Avg time per step: 0.79 ms | Validation Loss: 0.0899 |</code><br>
+Layer-Normalization: <code>Epoch: 14/30 | Loss: 0.0050 | Avg time per step: 0.73 ms | Validation Loss: 0.0772 |</code></p>
+</li>
+<li>
+<p>For some reason Validation Loss for model with normalization is not better than the model without any normalization, maybe it&rsquo;ll be better when the model gets deeper (i.e when number of layers increases) (<strong>correct???</strong>)</p>
+</li>
+<li>
+</li>
+</ul>
+<h1 id="dropout--">Dropout <a href="https://www.cs.toronto.edu/~rsalakhu/papers/srivastava14a.pdf">[Paper]</a> <a href="https://www.deeplearningbook.org/contents/regularization.html#pf20:~:text=7.12-,Dropout,-Dropout">[Deep-Learning Book]</a><a hidden class="anchor" aria-hidden="true" href="#dropout--">#</a></h1>
+<ul>
+<li>
+<p><img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-13.png"></p>
+</li>
+<li>
+<p>To a ﬁrst approximation, dropout can be thought of as a method of making bagging practical for ensembles of very many large neural networks
+<img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-15.png"></p>
+</li>
+<li>
+<p>Dropout training is not quite the same as bagging training. In the case ofbagging, the models are all independent. In the case of dropout, the modelsshare parameters, with each model inheriting a diﬀerent subset of parametersfrom the parent neural network</p>
+</li>
+<li>
+<p><img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-14.png">
+If a unit is retained with probability p during training, the outgoing weights of that unit are multiplied by p at test time as shown in Figure 2. This ensures that for any hidden unit the expected output (under the distribution used to drop units at training time) is the same as the actual output at test time</p>
+</li>
+<li>
+<p>In the case of bagging, each model i produces a probability distribution
+<img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-16.png">
+<img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-17.png">
+Because this sum includes an exponential number of terms, it is intractable to evaluate.
+Even 10–20 masks are often suﬃcient to obtaingood performance.</p>
+</li>
+<li>
+<p>An even better approach, however, allows us to obtain a good approximation tothe predictions of the entire ensemble, at the cost of only one forward propagation. To do so, we change to using the geometric mean rather than the arithmetic mean ofthe ensemble members’ predicted distributions
+<img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-18.png"></p>
+</li>
+<li>
+<p><img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-19.png">
+<img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-20.png"></p>
+</li>
+<li>
+<p>For many classes of models that do not have nonlinear hidden units, the weight scaling inference rule is exact
+<img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-30.png"><img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-22.png">
+<img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-23.png"></p>
+</li>
+<li>
+<p><img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-24.png">
+Using Properties of exponents ($e^a*e^b = e^{a+b}$ and $\sqrt{e}=e^{1/2}$) we get
+<img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-27.png">
+Now the term in the exp (don&rsquo;t take the bias) is the expectation of <img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-28.png"></p>
+<p>which is <img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-29.png"> because expectation of $d$ is just the <strong>probablity of inclusion</strong></p>
+<p><img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-31.png"></p>
+</li>
+<li>
+<p>Another method is where we would leave the inputs unchanged at inference time, but at training time we scale the retained inputs by $1/p$ where $p$ is the probabilty of inclusion. This is the method which is used in the implementation</p>
+</li>
+<li>
+<p>Dropping out 20% of the input units and 50% of the hidden units was often found to be optimal
+(In the simplest case, each unit is retained with a fixed probability p independent of other units, where p can be chosen using a validation set or can simply be set at 0.5, which seems to be close to optimal for a wide range of networks and tasks. For the input units, however, the optimal probability of retention is usually closer to 1 than to 0.5.)</p>
+</li>
+<li>
+<p>Bernoulli Distribution is used to mask the input values
+<img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-32.png"></p>
+</li>
+</ul>
+<h3 id="comparision-1">Comparision<a hidden class="anchor" aria-hidden="true" href="#comparision-1">#</a></h3>
+<ul>
+<li>Without Scaling Model<br>
+<img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-33.png"> <img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-34.png"></li>
+<li>After Scaling Model<br>
+<!-- raw HTML omitted -->  <img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-36.png">
+<ul>
+<li>In <code>nn_scale.ipynb</code>, validation loss starts increasing&hellip;
+Now see <code>dropput_scale.ipynb</code>, the gap between training and validation metrics is lesser than in <code>nn_scale.ipynb</code></li>
+<li>Validation metrics have improved, but at the cost of training metrics</li>
+</ul>
+</li>
+<li>See the notebooks for the train logs</li>
+</ul>
+<h1 id="lenet-convolutional-neural-networks-from-scratch">LeNet: Convolutional Neural Networks from scratch<a hidden class="anchor" aria-hidden="true" href="#lenet-convolutional-neural-networks-from-scratch">#</a></h1>
+<ul>
+<li>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<!-- raw HTML omitted -->
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<ul>
+<li>Not yet fully converged, used a low training rate (by mistake), actually 0.1 works for such small networks (if you train it for some reason, send a Pull request)</li>
+</ul>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<h2 id="neural-network-optimization">Neural Network Optimization<a hidden class="anchor" aria-hidden="true" href="#neural-network-optimization">#</a></h2>
+<ul>
+<li>
+<!-- raw HTML omitted -->
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<!-- raw HTML omitted -->
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<h3 id="momentum">Momentum<a hidden class="anchor" aria-hidden="true" href="#momentum">#</a></h3>
+<ul>
+<li>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<!-- raw HTML omitted -->
+</li>
+</ul>
+<hr>
+<h3 id="bias-correction">Bias Correction<a hidden class="anchor" aria-hidden="true" href="#bias-correction">#</a></h3>
+<ul>
+<li>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<!-- raw HTML omitted -->
+</li>
+</ul>
+<hr>
+<ul>
+<li>
+<!-- raw HTML omitted -->
+</li>
+</ul>
+<p>These up and down oscillations slow down gradient descent, preventing the use of large learning rates.</p>
+<ul>
+<li>
+<!-- raw HTML omitted -->
+</li>
+</ul>
+<hr>
+<h3 id="adaptive-learning-rate">Adaptive Learning Rate<a hidden class="anchor" aria-hidden="true" href="#adaptive-learning-rate">#</a></h3>
+<ul>
+<li>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<!-- raw HTML omitted -->
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<hr>
+<h3 id="nestrov-accelerated-gradient">Nestrov accelerated gradient<a hidden class="anchor" aria-hidden="true" href="#nestrov-accelerated-gradient">#</a></h3>
+<ul>
+<li>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<!-- raw HTML omitted -->
+</li>
+</ul>
+<hr>
+<h3 id="adam">Adam<a hidden class="anchor" aria-hidden="true" href="#adam">#</a></h3>
+<!-- raw HTML omitted -->
+<hr>
+<h3 id="second-order-methods">Second-order methods<a hidden class="anchor" aria-hidden="true" href="#second-order-methods">#</a></h3>
+<ul>
+<li>
+<!-- raw HTML omitted -->
+<p><a href="https://en.wikipedia.org/wiki/Newton%27s_method_in_optimization">Newton&rsquo;s Method on Wikipedia</a></p>
+<p>We want to choose the best step size $del w$ that minimizes this quadratic approximation</p>
+</li>
+<li>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<!-- raw HTML omitted -->
+</li>
+</ul>
+<hr>
+<h3 id="muon-an-optimizer-for-hidden-layers-in-neural-networks"><a href="https://kellerjordan.github.io/posts/muon">Muon: An optimizer for hidden layers in neural networks</a><a hidden class="anchor" aria-hidden="true" href="#muon-an-optimizer-for-hidden-layers-in-neural-networks">#</a></h3>
+<ul>
+<li>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<!-- raw HTML omitted -->
+</li>
+<li>
+<p>Instead of applying the &ldquo;momentumized&rdquo; gradient directly, Muon modifies it using an orthogonalization step and then uses it for weight update</p>
+</li>
+<li>
+<p>The orthogonalization process replaces the update matrix G with its nearest orthogonal matrix, which mathematically is equivalent to replacing G with UV^T where USV^T is its SVD. This means:
+You keep the same subspace spanned by the update (the U and V matrices)
+But you remove the singular value scaling (the S matrix) that was causing some directions to dominate</p>
+</li>
+<li>
+<p>The intuition is that neural networks benefit from exploring the parameter space more uniformly across different directions rather than being heavily biased toward just the strongest gradient directions. By orthogonalizing, you ensure that:</p>
+<ul>
+<li>Important but subtle learning directions don&rsquo;t get overwhelmed by dominant ones</li>
+<li>The optimization process explores the parameter space more efficiently</li>
+<li>You avoid getting stuck in narrow valleys where only a few directions matter</li>
+</ul>
+</li>
+<li>
+<p>Computing SVD is expensive, so they use the Newton–Schulz iteration algorithm
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+</li>
+</ul>
+<h3 id="some-plots-comparing-optimizers">Some plots comparing Optimizers<a hidden class="anchor" aria-hidden="true" href="#some-plots-comparing-optimizers">#</a></h3>
+<ul>
+<li>
+<p>lr = 0.001 for all. Low for SGD and SGDMomentum.
+<!-- raw HTML omitted --></p>
+<p>Let&rsquo;s increase lr for all</p>
+</li>
+<li>
+<p>lr = 0.01 for all. That&rsquo;s a lot for RMSProp and Adam.
+<!-- raw HTML omitted --></p>
+<p>Let&rsquo;s increase more for SGD and decrease for RMSProp and Adam</p>
+</li>
+<li>
+<p>So, yes, different lr is optimal for different optimizers
+<!-- raw HTML omitted --></p>
+</li>
+<li>
+<p>Didn&rsquo;t try many hyperparameters for Muon, and it outperformed all the others
+<!-- raw HTML omitted --></p>
+</li>
+</ul>
+<h3 id="benchmarking-optimizers-on-cifar-10">Benchmarking Optimizers on CIFAR-10<a hidden class="anchor" aria-hidden="true" href="#benchmarking-optimizers-on-cifar-10">#</a></h3>
+<ul>
+<li><img alt="cifar10 benchmark" loading="lazy" src="/posts/neuroforge/ckpt/cifar_benchmark/optimizer_comparison_training_loss.png"></li>
+<li><img alt="val acc" loading="lazy" src="/posts/neuroforge/ckpt/cifar_benchmark/optimizer_comparison_validation_accuracy.png">
+<blockquote>
+<p>Code for plotting by Claude 4</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h3 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h3>
+<ul>
+<li><a href="https://arxiv.org/pdf/1609.04747">&ldquo;An overview of gradient descent optimization algorithms&rdquo;</a></li>
+<li><a href="https://cs231n.github.io/neural-networks-3">&ldquo;https://cs231n.github.io/neural-networks-3&rdquo;</a></li>
+<li><a href="https://johnchenresearch.github.io/demon">&ldquo;An updated overview of recent gradient descent algorithms&rdquo;</a></li>
+<li><a href="https://jeremybernste.in/writing/deriving-muon">&ldquo;deriving-muon&rdquo;</a></li>
+<li><a href="https://kellerjordan.github.io/posts/muon/">&ldquo;Muon: An optimizer for hidden layers in neural networks&rdquo; by Keller Jordan</a>
+<!-- raw HTML omitted --></li>
+</ul>
+<hr>
+<h2 id="additional-notes-on-neural-network-optimization">Additional Notes on Neural Network Optimization<a hidden class="anchor" aria-hidden="true" href="#additional-notes-on-neural-network-optimization">#</a></h2>
+<ul>
+<li>
+<!-- raw HTML omitted -->
+</li>
+</ul>
+<hr>
+<h3 id="more-on-adam-and-adamw-adam-with-weight-decay-optimizers">More on Adam and AdamW (Adam with weight decay) Optimizers<a hidden class="anchor" aria-hidden="true" href="#more-on-adam-and-adamw-adam-with-weight-decay-optimizers">#</a></h3>
+<h4 id="adam-1">Adam<a hidden class="anchor" aria-hidden="true" href="#adam-1">#</a></h4>
+<ul>
+<li><img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-8.png"></li>
+</ul>
+<h4 id="adamw">AdamW<a hidden class="anchor" aria-hidden="true" href="#adamw">#</a></h4>
+<ul>
+<li>What&rsquo;s weight decay?<br>
+<img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-12.png"></li>
+<li>Paper Implementation
+<img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-9.png"></li>
+<li>L2 regularization and weight decay regularization are equivalent for standard stochastic gradient descent (when rescaled by the learning rate), but as we demonstrate this is not the case for adaptive gradient algorithms, such as Adam</li>
+<li>Common implementations of these algorithms employ L2 regularization (often calling it “weight decay” in what may be misleading due to the inequivalence we expose). For example see the pytorch implementation of Adam (which is wrong) below
+<img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-10.png"></li>
+<li>$L = CE + \left(\frac{\lambda}{2}\theta^2\right)$<br>
+$\nabla L = \nabla CE + \nabla \left(\frac{\lambda}{2}\theta^2\right) = \nabla CE +  \lambda\theta$<br>
+This is the same expression in above images/image for weight decay but it&rsquo;s actually for <code>L2 Loss</code> as shown in the equations here
+The corrected version is given below
+<img alt="alt text" loading="lazy" src="/posts/neuroforge/images/image-11.png"></li>
+</ul>
+<h1 id="model-distillation--">Model Distillation <a href="https://arxiv.org/pdf/1503.02531">[Paper]</a> <a href="https://github.com/IntelLabs/distiller/blob/master/docs-src/docs/knowledge_distillation.md?utm_source=chatgpt.com">[Reference]</a><a hidden class="anchor" aria-hidden="true" href="#model-distillation--">#</a></h1>
+<h2 id="paper-snippets">Paper Snippets<a hidden class="anchor" aria-hidden="true" href="#paper-snippets">#</a></h2>
+<ul>
+<li>We achieve some surprising results on MNIST and we show that we
+can significantly improve the acoustic model of a heavily used commercial system
+by distilling the knowledge in an ensemble of models into a single model</li>
+<li>Once the cumbersome model has been trained, we
+can then use a different kind of training, which we call “distillation” to transfer the knowledge from
+the cumbersome model to a small model that is more suitable for deployment</li>
+<li>When we are distilling the knowledge
+from a large model into a small one, however, we can train the small model to generalize in the same
+way as the large model</li>
+<li>If the cumbersome model generalizes well because, for example, it is the
+average of a large ensemble of differentmodels, a small model trained to generalize in the same way
+will typically do much better on test data than a small model that is trained in the normal way on the
+same training set as was used to train the ensemble.</li>
+<li>Use the class probabilities produced by the cumbersome model as “soft targets” for training the
+small model</li>
+<li>Probabilities are so close to zero.
+Caruana and his collaborators circumvent this problem by using the logits (the inputs to the final
+softmax) rather than the probabilities produced by the softmax as the targets for learning the small
+model and they minimize the squared difference between the logits produced by the cumbersome
+model and the logits produced by the small model</li>
+<li>Our more general solution, called “distillation”,
+is to raise the temperature of the final softmax until the cumbersome model produces a suitably soft
+set of targets. We then use the same high temperature when training the small model to match these
+soft targets. We show later that matching the logits of the cumbersome model is actually a special
+case of distillation.</li>
+<li>The transfer set that is used to train the small model could consist entirely of unlabeled data
+or we could use the original training set. We have found that using the original training set works
+well, especially if we add a small term to the objective function that encourages the small model
+to predict the true targets as well as matching the soft targets provided by the cumbersome model.</li>
+</ul>
+<h3 id="distillation">Distillation<a hidden class="anchor" aria-hidden="true" href="#distillation">#</a></h3>
+<ul>
+<li><img alt="image" loading="lazy" src="https://github.com/user-attachments/assets/4249c130-2aa7-44de-ae19-a7e67c97646e"></li>
+</ul>
+<h3 id="preliminary-experiments-on-mnist">Preliminary experiments on MNIST<a hidden class="anchor" aria-hidden="true" href="#preliminary-experiments-on-mnist">#</a></h3>
+<ul>
+<li>We trained a single large neural net with two hidden layers
+of 1200 rectified linear hidden units on all 60,000 training cases</li>
+<li>The net was strongly regularized
+using dropout and weight-constraints as described in [5]. Dropout can be viewed as a way of training
+an exponentially large ensemble of models that share weights</li>
+<li>In addition, the input images were jittered by up to two pixels in any direction</li>
+<li>This net achieved 67 test errors whereas a smaller
+net with two hidden layers of 800 rectified linear hidden units and no regularization achieved 146
+errors. But if the smaller net was regularized solely by adding the additional task of matching the soft
+targets produced by the large net at a temperature of 20, it achieved 74 test errors. This shows that
+soft targets can transfer a great deal of knowledge to the distilled model, including the knowledge
+about how to generalize that is learned from translated training data even though the transfer set does
+not contain any translations</li>
+<li><em>When the distilled net had 300 or more units in each of its two hidden layers, all temperatures above
+8 gave fairly similar results. But when this was radically reduced to 30 units per layer, temperatures
+in the range 2.5 to 4 worked significantly better than higher or lower temperatures</em></li>
+<li><strong>We then <em>tried omitting all examples of the digit 3 from the transfer set</em>. So from the perspective
+of the distilled model, 3 is a mythical digit that it has never seen. Despite this, the distilled model
+only makes 206 test errors of which 133 are on the 1010 threes in the test set. Most of the errors
+are caused by the fact that the learned <code>bias</code> for the 3 class is much too low. <em>If this <code>bias</code> is increased
+by 3.5 (which optimizes overall performance on the test set), the distilled model makes 109 errors
+of which 14 are on 3s</em>. So with the right <code>bias</code>, the distilled model gets 98.6% of the test 3s correct
+despite never having seen a 3 during training. If the transfer set contains only the 7s and 8s from the
+training set, the distilled model makes 47.3% test errors, but when the <code>bias</code>es for 7 and 8 are reduced
+by 7.6 to optimize test performance, this falls to 13.2% test errors</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>model<span style="color:#f92672">.</span>fc<span style="color:#f92672">.</span>bias<span style="color:#f92672">.</span>data[<span style="color:#ae81ff">3</span>] <span style="color:#f92672">+=</span> <span style="color:#ae81ff">3.5</span>
+</span></span></code></pre></div><h3 id="soft-targets-as-regularizers">Soft-Targets as Regularizers<a hidden class="anchor" aria-hidden="true" href="#soft-targets-as-regularizers">#</a></h3>
+<ul>
+<li>One of our main claims about using soft targets instead of hard targets is that a lot of helpful infor
+nation can be carried in soft targets that could not possibly be encoded with a single hard target.
+<img alt="image" loading="lazy" src="https://github.com/user-attachments/assets/f612331c-257d-4235-b287-a7afb423adff"></li>
+</ul>
+<h1 id="mixture-of-experts-moe-layer">Mixture-of-Experts (MoE) layer<a hidden class="anchor" aria-hidden="true" href="#mixture-of-experts-moe-layer">#</a></h1>
+<ul>
+<li>The capacity of a neural network to absorb information is limited by its number of
+parameters. Conditional computation, where parts of the network are active on a
+per-example basis, has been proposed in theory as a way of dramatically increasing
+model capacity without a proportional increase in computation. there are significant algorithmic and performance challenges</li>
+<li>In this work, we address these challenges and finally realize the promise of conditional
+computation, achieving greater than 1000x improvements in model capacity with
+only minor losses in computational efficiency on modern GPU clusters.</li>
+<li><em>We introduce a Sparsely-Gated Mixture-of-Experts layer (MoE), consisting of up to
+thousands of feed-forward sub-networks. A trainable gating network determines
+a sparse combination of these experts to use for each example</em></li>
+</ul>
+<h3 id="introduction">Introduction<a hidden class="anchor" aria-hidden="true" href="#introduction">#</a></h3>
+<ul>
+<li>For typical deep learning models, where the entire model is activated for every example, this leads to
+a roughly quadratic blow-up in training costs, as both the model size and the number of training
+examples increase</li>
+<li>Various forms of conditional computation have been proposed as a way to increase model capacity
+without a proportional increase in computational costs, in these schemes, large parts of a network are active or inactive on a per-example
+basis. <em><strong>The gating decisions may be binary or sparse and continuous, stochastic or deterministic</strong></em>.
+Various forms of reinforcement learning and back-propagation are proposed for trarining the gating
+decisions</li>
+</ul>
+<h2 id="the-sparsely-gated-mixture-of-experts-layer">THE SPARSELY-GATED MIXTURE-OF-EXPERTS LAYER<a hidden class="anchor" aria-hidden="true" href="#the-sparsely-gated-mixture-of-experts-layer">#</a></h2>
+<ul>
+<li><img alt="image" loading="lazy" src="https://github.com/user-attachments/assets/30571061-6bfc-4e1e-ade9-bda358091698"></li>
+<li>A Sparsely-Gated Mixture-of-Experts Layer (MoE). The MoE consists of a number
+of experts, each a simple feed-forward neural network, and a trainable gating network which
+selects a sparse combination of the experts to process each input (see Figure 1). All parts of the
+network are trained jointly by back-propagation</li>
+<li><img alt="image" loading="lazy" src="https://github.com/user-attachments/assets/c6c5cd6b-557e-45e2-9f58-ae196249e033"></li>
+</ul>
+<blockquote>
+<p><em><strong>In MoE, whenever the gated value function returns 0, we need not compute that particular function, but it&rsquo;s parameters are in memory, so we are saving computation power not memory</strong></em></p>
+</blockquote>
+<h3 id="gating-network">Gating Network<a hidden class="anchor" aria-hidden="true" href="#gating-network">#</a></h3>
+<ul>
+<li><img alt="image" loading="lazy" src="https://github.com/user-attachments/assets/6b054f69-0e64-4d40-ab01-e0631dc751cf"></li>
+<li><img alt="image" loading="lazy" src="https://github.com/user-attachments/assets/9e28eb58-f315-46f8-8150-c025c8270563"></li>
+</ul>
+<h2 id="addressing-performance-challenges">ADDRESSING PERFORMANCE CHALLENGES<a hidden class="anchor" aria-hidden="true" href="#addressing-performance-challenges">#</a></h2>
+<ul>
+<li>If the gating network chooses $k$ out of
+$n$ experts for each example, then for a batch of $b$ examples, each expert receives a much smaller
+batch of approximately $kb/n &laquo; b$ examples. This causes a naive MoE implementation to become
+very inefficient as the number of experts increases. The solution to this shrinking batch problem is
+to make the original batch size as large as possible. However, batch size tends to be limited by the
+memory necessary to store activations between the forwards and backwards passes. We propose the
+following techniques for increasing the batch size:
+<ul>
+<li>(i) <strong>Mixing Data Parallelism and Model Parallelism</strong>:
+<img alt="image" loading="lazy" src="https://github.com/user-attachments/assets/84eb8589-4418-41c1-bbd5-ca29a018ae4c">
+In the case of a hierarchical MoE (Section B), the primary gating network employs data parallelism,
+and the secondary MoEs employ model parallelism. Each secondary MoE resides on one device
+<img alt="image" loading="lazy" src="https://github.com/user-attachments/assets/f78aaa29-2f0a-439e-8d02-5df92f161940"></li>
+<li>(ii) <strong>Taking Advantage of Convolutionality</strong>:
+In our language models (<em>RNNs not Transformers</em> (invented later in late 2017)), we apply the same MoE to each
+time step of the previous layer. If we wait for the previous layer to finish, we can apply the MoE
+to all the time steps together as one big batch. Doing so increases the size of the input batch to the
+MoE layer by a factor of the number of unrolled time steps</li>
+<li>(iii) <strong>Increasing Batch Size for a Recurrent MoE</strong>:
+We suspect that even more powerful models may
+involve applying a MoE recurrently. For example, the weight matrices of a LSTM or other RNN
+could be replaced by a MoE. Sadly, such models break the convolutional trick from the last paragraph,
+since the input to the MoE at one timestep depends on the output of the MoE at the previous
+timestep. Gruslys et al. (2016) describe a technique for drastically reducing the number of stored
+activations in an unrolled RNN, at the cost of recomputing forward activations. This would allow
+for a large increase in batch size</li>
+</ul>
+</li>
+</ul>
+<h3 id="balancing-expert-utilization">Balancing Expert Utilization<a hidden class="anchor" aria-hidden="true" href="#balancing-expert-utilization">#</a></h3>
+<ul>
+<li><img alt="image" loading="lazy" src="https://github.com/user-attachments/assets/fe0483b3-9291-4f69-9d42-3c8cc0033ae5"></li>
+<li><img alt="image" loading="lazy" src="https://github.com/user-attachments/assets/f4edee51-2dde-4413-a3f7-a21b67a3b1f0"></li>
+<li><img alt="image" loading="lazy" src="https://github.com/user-attachments/assets/b1875829-987a-4e60-9629-bb7ca69492a5"><br>
+$Load(x)$ =&gt; Probability of Selection $P(x, i)$: $G(x)$ is nonzero for expert $i$ if and only if the gating score $H(x)_i$ (raw gating output before thresholding) is greater than the
+$k^{\text{th}}$ -greatest score among all other experts</li>
+<li>$Φ$ is the CDF (Gaussian cumulative distribution function) of the standard normal distribution</li>
+<li>Let&rsquo;s break down the Load Balancing Loss:
+we have to minimize $L_{load} (X)$, so we have to minimize $CV(Load(X))$, hence, we have to reduce the standard deviation of Load, which means most values are centred around the mean, forcing most values to be near the mean, same for $L_{importance}$</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">VachanVY</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
