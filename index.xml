@@ -15,5 +15,12 @@
       <guid>https://vachanvy.github.io/posts/clexer/</guid>
       <description>&lt;p&gt;So I wrote a lexer in pure C for my &lt;a href=&#34;https://github.com/VachanVY/nanocc&#34;&gt;Nano C Compiler (nanocc)&lt;/a&gt;. In this post, I&amp;rsquo;ll walk you through the design and implementation of the lexer, explaining the key components and decisions made along the way. I&amp;rsquo;m assuming you have basic knowledge of regular expressions and finite automata.&lt;/p&gt;&#xA;&lt;p&gt;I&amp;rsquo;ve only implemented a subset of C (no structs, pointers, arrays, etc.) for now, but the lexer can be easily extended to support more features in the future.&lt;/p&gt;</description>
     </item>
+    <item>
+      <title>NeuroForge</title>
+      <link>https://vachanvy.github.io/posts/neuroforge/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://vachanvy.github.io/posts/neuroforge/</guid>
+      <description>&lt;!-- raw HTML omitted --&gt;&#xA;&lt;p&gt;Redirecting to &lt;a href=&#34;https://github.com/VachanVY/NeuroForge?tab=readme-ov-file#contents&#34;&gt;NeuroForge on GitHub&lt;/a&gt;&amp;hellip;&lt;/p&gt;</description>
+    </item>
   </channel>
 </rss>
