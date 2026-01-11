@@ -9,11 +9,11 @@
     <lastBuildDate>Sun, 11 Jan 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://vachanvy.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>NanoCC</title>
-      <link>https://vachanvy.github.io/posts/nanocc/</link>
+      <title>Writing a Lexer in Pure C (v1 draft)</title>
+      <link>https://vachanvy.github.io/posts/clexer/</link>
       <pubDate>Sun, 11 Jan 2026 00:00:00 +0000</pubDate>
-      <guid>https://vachanvy.github.io/posts/nanocc/</guid>
-      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;&#xA;&lt;p&gt;This is a sample post about NanoCC. You can edit this content to write about your project, ideas, or anything you&amp;rsquo;d like to share.&lt;/p&gt;&#xA;&lt;h2 id=&#34;getting-started&#34;&gt;Getting Started&lt;/h2&gt;&#xA;&lt;p&gt;Add your content here using Markdown formatting. You can include:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Lists&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Bold&lt;/strong&gt; and &lt;em&gt;italic&lt;/em&gt; text&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://example.com&#34;&gt;Links&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;Images (if you have them in this folder)&lt;/li&gt;&#xA;&lt;li&gt;Code blocks&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Example code&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;hello&lt;/span&gt;():&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    print(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Hello, World!&amp;#34;&lt;/span&gt;)&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;&#xA;&lt;p&gt;Replace this with your actual content!&lt;/p&gt;</description>
+      <guid>https://vachanvy.github.io/posts/clexer/</guid>
+      <description>&lt;p&gt;So I wrote a lexer in pure C for my &lt;a href=&#34;https://github.com/VachanVY/nanocc&#34;&gt;Nano C Compiler (nanocc)&lt;/a&gt;. In this post, I&amp;rsquo;ll walk you through the design and implementation of the lexer, explaining the key components and decisions made along the way. I&amp;rsquo;m assuming you have basic knowledge of regular expressions and finite automata.&lt;/p&gt;&#xA;&lt;p&gt;I&amp;rsquo;ve only implemented a subset of C (no structs, pointers, arrays, etc.) for now, but the lexer can be easily extended to support more features in the future.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
