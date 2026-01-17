@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Writing a Lexer in Pure C (v1 draft) | My Site</title>
+    <title>Writing a Lexer in Pure C (draft) | My Site</title>
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/fonts.css" />
     
@@ -22,7 +22,7 @@
     </nav>
 
 <div class="article-meta">
-<h1><span class="title">Writing a Lexer in Pure C (v1 draft)</span></h1>
+<h1><span class="title">Writing a Lexer in Pure C (draft)</span></h1>
 
 <h2 class="date">2026/01/11</h2>
 </div>
@@ -31,6 +31,8 @@
 <p>So I wrote a lexer in pure C for my <a href="https://github.com/VachanVY/nanocc">Nano C Compiler (nanocc)</a>. In this post, I&rsquo;ll walk you through the design and implementation of the lexer, explaining the key components and decisions made along the way. I&rsquo;m assuming you have basic knowledge of regular expressions and finite automata.</p>
 <p>I&rsquo;ve only implemented a subset of C (no structs, pointers, arrays, etc.) for now, but the lexer can be easily extended to support more features in the future.</p>
 <h1 id="introduction">Introduction</h1>
+<!-- what's a lexer? -->
+<!-- what does a lexer even do? -->
 <p>Let&rsquo;s start with what a lexer is. A lexer (or lexical analyzer) takes source code as input and constructs tokens, which is just a struct as shown below:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> {
 </span></span><span style="display:flex;"><span>    CTokenType type;   <span style="color:#75715e">// token category produced by the lexer
@@ -98,12 +100,15 @@
 </span></span><span style="display:flex;"><span>[SEMICOLON, <span style="color:#e6db74">&#34;;&#34;</span>]
 </span></span><span style="display:flex;"><span>[RBRACE, <span style="color:#e6db74">&#34;}&#34;</span>]
 </span></span></code></pre></div><p>tl;dr: It breaks down source code and classifies it into different types of tokens, which is further used by the parser.</p>
+<!-- why lexer in C? why not use lexer generators like Flex or ANTLR? -->
 <p>There are several libraries and tools available for building lexers, such as Flex, ANTLR, and others. However, I chose to implement my own lexer in pure C for a few reasons:</p>
 <ul>
 <li>Learning experience</li>
 <li>Clang and GCC use hand-written lexers</li>
 <li>No bloat, more control and moreover I&rsquo;m not a fan of abstractions</li>
 </ul>
+<!-- talk about the first version in C++ using std::regex -->
+<!-- why make the switch? why pure C? why remove std::regex dependecy -->
 <p>Initially, I implemented the lexer in C++ using the <code>std::regex</code> library. Since production compilers like Clang and GCC use hand-written lexers, I wanted to write it in pure C without relying on the regex library.</p>
 <h1 id="design-and-implementation">Design and Implementation</h1>
 <h2 id="main-lexer-function">Main Lexer Function</h2>
@@ -381,7 +386,14 @@ More examples of this are <code>==</code> vs <code>=</code>, <code>&gt;=</code> 
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>} <span style="color:#75715e">// namespace nanocc
 </span></span></span></code></pre></div><p>Here, we convert the C-style tokens returned by <code>clexer</code> into C++ <code>Token</code> objects used in nanocc. Note that we allocate new strings for each token&rsquo;s lexeme here, which will be optimized in the future.</p>
-
+<!-- `CToken` struct, explain about it. 0 string allocations method -->
+<!-- `CTokenType` explain  -->
+<!-- show `token_specs` -->
+<!-- show `clexer` function code and explain -->
+<!-- giving it a C++ interface-->
+<!-- show the code, explain -->
+<!-- talk about the coping strings part here -->
+<!-- future changes to be made, C++ Allocation -->
 </main>
 
   <footer>
