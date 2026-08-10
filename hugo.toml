@@ -1,0 +1,24 @@
+baseURL = "https://vachanvy.github.io/"
+languageCode = "en-us"
+title = "My Site"
+theme = "hugo-xmin"
+
+[params]
+description = "A minimal Hugo website"
+
+[markup.goldmark.renderer]
+unsafe = true
+
+[menu]
+[[menu.main]]
+name = "Home"
+url = "/"
+weight = 1
+[[menu.main]]
+name = "Posts"
+url = "/posts/"
+weight = 2
+[[menu.main]]
+name = "Photo Dump"
+url = "/photo-dump/"
+weight = 3

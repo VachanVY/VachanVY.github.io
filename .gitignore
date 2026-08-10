@@ -1,0 +1,19 @@
+# Hugo generated output
+public/
+resources/_gen/
+.hugo_build.lock
+
+# Root-level published artifacts (kept on main branch)
+404.html
+index.html
+index.xml
+robots.txt
+sitemap.xml
+about/
+ananke/
+categories/
+page/
+photo-dump/
+posts/
+tags/
+css/
